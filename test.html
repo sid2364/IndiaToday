@@ -1,0 +1,93 @@
+<html>
+<head>
+  <title>Print Contents</title>
+  <hta:application id="PC" 
+	applicationname="myApp1" 
+	border="dialog"
+	caption="yes"
+	singleinstance="yes"
+	sysmenu="yes"
+	maximizebutton="yes"
+	minimizebutton="yes"
+	navigable="yes"
+	showintaskbar="yes"
+</head>
+<script language="VBScript">
+
+objCheckBox = ""
+
+
+' Set Size of Windows
+strComputer = "."
+       Set objWMIService = GetObject("winmgmts:\\" & strComputer & "\root\cimv2")
+       Set colItems = objWMIService.ExecQuery("Select * From Win32_DesktopMonitor")
+       For Each objItem in colItems
+           intHorizontal = objItem.ScreenWidth
+           intVertical = objItem.ScreenHeight
+       Next
+       window.resizeTo 500,250
+
+
+'Choose Directory
+Function ChooseSaveFolder
+    'strStartDir = "c:\"
+    userselections.txtFile.value = PickFolder(strStartDir)
+End Function 
+
+
+
+Function PickFolder(strStartDir)
+	Dim SA, F
+	Set SA = CreateObject("Shell.Application")
+	Set F = SA.BrowseForFolder(0, "Choose a folder", 0, strStartDir)
+	If (Not F Is Nothing) Then
+		PickFolder = F.Items.Item.path
+		objPickFolder= F.Items.Item.path
+	End If
+	Set F = Nothing
+	Set SA = Nothing
+End Function 
+
+
+
+Function PrintToFile()
+	'MsgBox userselections.txtFile.value
+	objPath = userselections.txtFile.value
+	Set objShell = CreateObject("WScript.Shell")
+	'MsgBox 
+	objShell.Run "%comspec% /c " & "powershell.exe " & "Set-Location " & chr(39) & objPath & chr(39) & " " & chr(59) & _
+	" " & "Get-ChildItem" & " " & ">c:\list.txt" & " " & objCheckBox
+	CreateObject("WScript.Shell").Popup "Process Running Please Wait" & vbCr & "Until the Black Window Closes" & vbCr & "Then Click the OK Button", 30, "Process Running"
+	CreateObject("WScript.Shell").Run "c:\list.txt"
+	End Function
+
+
+
+Function CheckBoxChange()
+	objCheckBox = "-Recurse"
+End Function
+
+Function Reset()
+	objCheckBox = nothing
+	objShell = nothing
+	objPath = nothing
+	objPickFolder = nothing
+	PickFolder = nothing
+End Function
+
+</script>
+<body>
+
+<div id="header" style="color:#ffffff; height:100px; text-align:center; font-family:Tahoma;
+ filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0, StartColorStr='#0011aa', EndColorStr='#ffffff')">
+ <br /><h2>Print Directory Contents</h2>
+<form name="userselections">
+<input type = "text" name = "txtFile" size="50" />
+
+<input type = "button" value = "Browse ..." onClick="ChooseSaveFolder" /> <br>
+<input type = "button" value = "Run" onClick="PrintToFile" />
+<input type = "checkbox"  onclick="CheckBoxChange"/> Get SubFolders and Files <P>
+<input type = "button" value = "Reset" onClick="Reset" />
+</form>
+</body>
+</html>

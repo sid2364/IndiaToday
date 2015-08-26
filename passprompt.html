@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+
+<script type = "text/javascript">
+
+// Note: Like all Javascript password scripts, this is hopelessly insecure as the user can see
+//the valid usernames/passwords and the redirect url simply with View Source.
+// And the user can obtain another three tries simply by refreshing the page.
+//So do not use for anything serious!
+
+var count = 2;
+
+
+var passActual="admin@dc";
+
+window.fullScreen = true;
+
+
+function validate() {
+var pw = document.myform.pword.value;
+var valid = false;
+
+
+if(pw==passActual){
+valid=true;
+
+alert ("Login is successful");
+window.close();
+window.opener.location.href = "Password.html";
+return;
+
+/*
+
+	
+*/
+}
+
+
+
+var t = " tries";
+if (count == 1) {t = " try";}
+
+if (count >= 1) {
+
+alert ("Invalid username and/or password.  You have " + count + t + " left.");
+
+document.myform.pword.value = "";
+count --;
+}
+
+
+else {
+alert ("Still incorrect! You have no more tries left!");
+document.myform.pword.disabled = true;
+return false;
+}
+
+}
+	
+</script>
+
+<form name = "myform">
+<body bgcolor=#F0F0F0>
+<style>
+.center {
+	
+	width:100%;
+	text-align:center;
+    position:absolute;
+	vertical-align:middle;
+   
+}
+</style>
+<div class="center">
+
+<p style="color:black;">Password: <br><br><input type="password" id="pword" onKeypress="Javascript: if(event.keyCode==13)validate();" align="center">
+
+</div>
+</p>
+
+
+
+</form>
+</html>
